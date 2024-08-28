@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="quad_name"/>
+    <arg name="update_frequency" default="120.0"/>
+    
+
+    <!-- MOCAP -->
+    <node pkg="erl_quadrotor_mocap" exec="erl_quadrotor_mocap_node" name="mocap_$(var quad_name)" output="screen">
+        <param name="child_frame_id" value="$(var quad_name)"/>
+        <param name="max_accel" value="5.0"/>
+        <param name="update_frequency" value="$(var update_frequency)"/>
+        <param name="average_samples" value="10"/>
+        <remap from="pose" to="/mocap/$(var quad_name)/pose"/>
+        <remap from="odom" to="/mocap/$(var quad_name)/odometry"/>
+    </node>
+
+</launch>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="quad_name"/>
+    <arg name="update_frequency" default="120.0"/>
+    
+
+    <!-- MOCAP -->
+    <node pkg="erl_quadrotor_mocap" exec="erl_quadrotor_mocap_node" name="mocap_$(var quad_name)" output="screen">
+        <param name="child_frame_id" value="$(var quad_name)"/>
+        <param name="max_accel" value="5.0"/>
+        <param name="update_frequency" value="$(var update_frequency)"/>
+        <param name="average_samples" value="10"/>
+        <remap from="pose" to="/mocap_rigid_bodies"/>
+        <remap from="odom" to="/mocap/$(var quad_name)/odometry"/>
+    </node>
+    
+    <!-- Launch the NatNet client node -->
+    <node 
+        pkg="mocap_optitrack_client" 
+        exec="mocap_optitrack_client" 
+        name="natnet_client" 
+        output="log">
+        <param from="$(find-pkg-share mocap_optitrack_client)/config/natnetclient.yaml"/>
+    </node>
+
+    <!-- Launch the World to Base node with Z up axis -->
+    <node 
+        pkg="mocap_optitrack_w2b" 
+        exec="mocap_optitrack_w2b" 
+        name="world_to_base" 
+        output="log">
+        <param from="$(find-pkg-share mocap_optitrack_w2b)/config/world_to_base_z_up.yaml"/>
+    </node>
+
+    <!-- Launch the Inverse Kinematics node -->
+    <node 
+        pkg="mocap_optitrack_inv_kin" 
+        exec="mocap_optitrack_inv_kin" 
+        name="inverse_kinematics" 
+        output="log">
+        <param from="$(find-pkg-share mocap_optitrack_inv_kin)/config/inverse_kinematics.yaml"/>
+    </node>
+
+</launch>
