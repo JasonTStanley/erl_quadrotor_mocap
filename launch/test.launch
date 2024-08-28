@@ -1,0 +1,21 @@
+<launch>
+  <arg name="quad_name"/>
+  <arg name="publish_tf" default="false"/>
+  <arg name="update_frequency" default="360"/>
+  <arg name="average_samples" default="10"/>
+
+  <node pkg="erl_quadrotor_mocap" type="erl_quadrotor_mocap" name="$(arg quad_name)" output="screen" ns="vicon">
+    <param name="child_frame_id" type="string" value="$(arg quad_name)"/>
+    <param name="publish_tf" type="bool" value="$(arg publish_tf)"/>
+    <param name="max_accel" value="5.0"/>
+    <param name="update_frequency" type="int" value="$(arg update_frequency)"/>
+    <param name="average_samples" type="int" value="$(arg average_samples)"/>
+    <remap from="~pose" to="/blackbird/state"/>
+    <remap from="~odom" to="mocap/$(arg quad_name)/odometry"/>
+  </node>
+
+  <node pkg="rosbag" type="record" name="dataset" 
+            args="record -o $(find erl_quadrotor_mocap) 
+            -a
+            " />
+</launch>

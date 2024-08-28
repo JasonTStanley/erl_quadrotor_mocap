@@ -1,5 +1,5 @@
 #include "erl_quadrotor_mocap/filter.hpp"
-#include <eigen3/Eigen/LU>  // For matrix inverse
+#include <Eigen/LU>  // For matrix inverse
 
 namespace erl_quadrotor_mocap {
 

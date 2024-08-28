@@ -1,7 +1,7 @@
 #ifndef ERL_QUADROTOR_MOCAP_FILTER_HPP_
 #define ERL_QUADROTOR_MOCAP_FILTER_HPP_
 
-#include <eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 namespace erl_quadrotor_mocap {
 

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="quad_name"/>
+    <arg name="update_frequency" default="120"/>
+    <arg name="rviz" default="false"/>
+    
+
+    <!-- GUI -->
+    <node name="agiros_gui" pkg="rqt_gui" type="rqt_gui"
+          args="-s agiros_gui.basic_flight.BasicFlight --args
+        --quad_name $(arg quad_name)" output="screen"/>
+
+    <node pkg="tf"
+          type="static_transform_publisher"
+          name="realsense_is_world_broadcaster"
+          args="0 0 0 0 0 0 world camera_odom_frame 100"/>
+
+    
+    <!-- MOCAP -->
+    <node pkg="erl_quadrotor_mocap" type="erl_quadrotor_mocap" name="$(arg quad_name)" output="screen">
+        <param name="child_frame_id" type="string" value="$(arg quad_name)"/>
+        <param name="publish_tf" type="bool" value="false"/>
+        <param name="max_accel" value="5.0"/>
+        <param name="update_frequency" value="$(arg update_frequency)"/>
+        <param name="average_samples" value="10"/>
+        <remap from="~pose" to="/mocap/$(arg quad_name)/pose"/>
+        <remap from="~odom" to="/mocap/$(arg quad_name)/odometry"/>
+    </node>
+
+    <!-- Visualization -->
+    <group if="$(arg rviz)">
+        <node pkg="rviz" type="rviz" name="viz_face" args="-d $(find agiros)/resources/rviz/arena.rviz"
+              ns="$(arg quad_name)">
+        </node>
+    </group>
+
+    <!-- Bag -->
+    <group ns="$(arg quad_name)">
+        <node pkg="rosbag" type="record" name="dataset" 
+            args="record -o $(find agiros)/../../miscellaneous/datasets/rosbags/ 
+            -a
+            " />
+    </group>
+</launch>
